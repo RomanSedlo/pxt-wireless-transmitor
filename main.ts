@@ -1,5 +1,5 @@
 //radio.setFrequencyBand(0)
-radio.setTransmitPower(3)
+radio.setTransmitPower(5)
 radio.setGroup(37)
 radio.setTransmitSerialNumber(false)
 
@@ -15,7 +15,11 @@ const lightCalibrate: () => number = () => {
     return prumer = prumer / 10
 }
 
-avrglight = lightCalibrate()
+input.onButtonPressed(Button.A, function () {
+    avrglight = lightCalibrate()
+    radio.sendValue("state", 0)
+    mode = STATE.ready
+})
 
 enum STATE {
     ready,
@@ -32,17 +36,13 @@ basic.forever(() => {
             basic.showString("Ready")
             break;
         case STATE.running:
-            if (input.lightLevel() + 20 < avrglight) {
+            if (input.lightLevel() + 10 < avrglight) {
                 radio.sendValue("state", 2)
                 mode = STATE.finish
             }
             break;
         case STATE.finish:
             basic.showNumber(runtime)
-            if (input.buttonIsPressed(Button.A)) {
-                radio.sendValue("state", 0)
-                mode = STATE.ready
-            }
             break;
     }
 })
@@ -64,3 +64,4 @@ radio.onReceivedValue(function (name: string, value: number) {
         mode = STATE.ready
     }
 })
+
