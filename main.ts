@@ -19,6 +19,7 @@ input.onButtonPressed(Button.A, function () {
     avrglight = lightCalibrate()
     radio.sendValue("state", 0)
     mode = STATE.ready
+    music.playTone(400, 100)
 })
 
 enum STATE {
@@ -26,42 +27,41 @@ enum STATE {
     running,
     finish
 }
-let mode = STATE.ready as STATE
 
+let mode = STATE.ready as STATE
 let runtime: number
 
 basic.forever(() => {
     switch (mode) {
         case STATE.ready:
-            basic.showString("Ready")
+
+            basic.showString("R")
             break;
         case STATE.running:
-            if (input.lightLevel() + 10 < avrglight) {
+
+            basic.showString("")
+            if (input.lightLevel() + 50 < avrglight) {
                 radio.sendValue("state", 2)
                 mode = STATE.finish
             }
-            break;
+        break;
         case STATE.finish:
-            basic.showNumber(runtime)
+            basic.showNumber(runtime / 1000)
+            
             break;
     }
 })
 
 radio.onReceivedValue(function (name: string, value: number) {
+    music.playTone(500, 800)
     if (name === "state" && value === 1) {
         mode = STATE.running
     }
-})
-
-radio.onReceivedValue(function (name: string, value: number) {
-    if (name === "runtime") {
-        runtime = value
-    }
-})
-
-radio.onReceivedValue(function (name: string, value: number) {
     if (name === "state" && value === 0) {
         mode = STATE.ready
+    }
+    if (name === "time") {
+        runtime = value
     }
 })
 
