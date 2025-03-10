@@ -34,11 +34,9 @@ let runtime: number
 basic.forever(() => {
     switch (mode) {
         case STATE.ready:
-
             basic.showString("R")
             break;
         case STATE.running:
-
             basic.showString("")
             if (input.lightLevel() + 50 < avrglight) {
                 radio.sendValue("state", 2)
@@ -47,7 +45,6 @@ basic.forever(() => {
         break;
         case STATE.finish:
             basic.showNumber(runtime / 1000)
-            
             break;
     }
 })
@@ -64,4 +61,3 @@ radio.onReceivedValue(function (name: string, value: number) {
         runtime = value
     }
 })
-
